@@ -77,10 +77,10 @@ const userSchema = new Schema(
     email: {
       type: "String",
       required: true,
-      validate: {
-        validator: (value) => validator.isEmail(value),
-        message: "Invalid email format.",
-      },
+      // validate: {
+      //   validator: (value) => validator.isEmail(value),
+      //   message: "Invalid email format.",
+      // },
     },
     password: {
       type: "String",
@@ -88,7 +88,7 @@ const userSchema = new Schema(
     },
     phone: {
       type: "String",
-      required: true,
+      required: false,
     },
     verificationCode: {
       type: "Number",

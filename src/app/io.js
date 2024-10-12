@@ -1,9 +1,3 @@
-import sendMessage from "../modules/chat/socketIo.chat.js";
-import activeStatus from "../modules/user/socketIo.user.js";
-
-const useIo = (io) => {
-  activeStatus(io);
-  sendMessage(io);
-};
+const useIo = (io) => {};
 
 export default useIo;

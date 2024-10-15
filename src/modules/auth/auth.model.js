@@ -79,21 +79,27 @@ const userSchema = new Schema(
       required: true,
       default: "false",
     },
-    email: {
+    phone: {
       type: "String",
       required: true,
-      // validate: {
-      //   validator: (value) => validator.isEmail(value),
-      //   message: "Invalid email format.",
-      // },
     },
     password: {
       type: "String",
       required: true,
     },
-    phone: {
+
+    device_model: {
       type: "String",
       required: false,
+    },
+    whatsapp_number: {
+      type: "String",
+      required: false,
+    },
+    access_routes: {
+      type: "Array",
+      required: false,
+      default: [],
     },
     verificationCode: {
       type: "Number",

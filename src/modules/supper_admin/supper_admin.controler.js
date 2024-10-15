@@ -2,7 +2,11 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { genarateToken } from "../../utils/genarateToken.js";
-import { createUserService } from "./supper_admin.service.js";
+import {
+  createUserService,
+  getUserService,
+  updateUserService,
+} from "./supper_admin.service.js";
 import { jwtTokenSercretKey } from "../../../secret.js";
 import UserModel from "../auth/auth.model.js";
 
@@ -120,6 +124,41 @@ export const getAllUsersController = async (req, res) => {
       statusCode: 200,
       message: "Successfull",
       data: allUsers,
+    });
+  } else {
+    return res.status(500).json({
+      statusCode: 500,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const updateUsersController = async (req, res) => {
+  const userData = req?.body?.user;
+  if (req.user.role === "supper_admin") {
+    const updatedUser = await updateUserService(userData, req);
+
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Successfull",
+      data: allUsers,
+    });
+  } else {
+    return res.status(500).json({
+      statusCode: 500,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const geteUsersController = async (req, res) => {
+  if (req.user.role === "supper_admin") {
+    const userData = await getUserService(req);
+
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Successfull",
+      data: userData,
     });
   } else {
     return res.status(500).json({

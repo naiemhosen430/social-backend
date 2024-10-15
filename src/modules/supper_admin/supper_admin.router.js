@@ -4,6 +4,8 @@ import {
   createUserController,
   createUserTokenController,
   getAllUsersController,
+  geteUsersController,
+  updateUsersController,
 } from "./supper_admin.controler.js";
 
 const supper_admin_router = express.Router();
@@ -19,5 +21,13 @@ supper_admin_router
 supper_admin_router
   .route("/getalluser")
   .get(supper_admin_authentication, getAllUsersController);
+
+supper_admin_router
+  .route("/getuser/:id")
+  .get(supper_admin_authentication, geteUsersController);
+
+supper_admin_router
+  .route("/updateuser/:id")
+  .put(supper_admin_authentication, updateUsersController);
 
 export default supper_admin_router;

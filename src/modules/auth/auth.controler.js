@@ -13,8 +13,8 @@ import { jwtTokenSercretKey } from "../../../secret.js";
 export const createUserController = async (req, res) => {
   try {
     // Check for required credentials
-    const { fullname, email, token, password } = req.body;
-    if (!fullname || !email || !token || !password) {
+    const { fullname, phone, token, password } = req.body;
+    if (!fullname || !phone || !token || !password) {
       return res.status(409).json({
         statusCode: 409,
         message: "All credentials are required.",
@@ -49,11 +49,11 @@ export const createUserController = async (req, res) => {
       }
 
       // Check if the user already exists
-      const checkUser = await UserModel.findOne({ email });
+      const checkUser = await UserModel.findOne({ phone });
       if (checkUser) {
         return res.status(409).json({
           statusCode: 409,
-          message: "This email is already in use",
+          message: "This phone is already in use",
         });
       }
 
@@ -61,7 +61,7 @@ export const createUserController = async (req, res) => {
       const hashPassword = bcryptjs.hashSync(password, 10);
       const userinfo = {
         fullname,
-        email,
+        phone,
         password: hashPassword,
       };
 
@@ -106,19 +106,19 @@ export const createUserController = async (req, res) => {
 
 export const loginUserController = async (req, res) => {
   try {
-    if (!req.body.email || !req.body.password) {
+    if (!req.body.phone || !req.body.password) {
       return res.status(409).json({
         statusCode: 409,
         message: "All cradencial required.",
       });
     }
 
-    const result = await findOneByEmailFromUser(req.body.email);
+    const result = await findOneByEmailFromUser(req.body.phone);
 
     if (!result) {
       return res.status(404).json({
         statusCode: 404,
-        message: "No account found with this email",
+        message: "No account found with this phone",
       });
     }
 

@@ -33,3 +33,43 @@ export const authentication = (req, res, next) => {
     });
   }
 };
+
+// for supper admin authentication 
+export const supper_admin_authentication = (req, res, next) => {
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        statusCode: 401,
+        message: "JWT is required for accessing the route",
+      });
+    }
+
+    jwt.verify(token, jwtTokenSercretKey, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({
+          statusCode: 401,
+          message: "Invalid JWT token",
+        });
+      }
+
+      if (decoded?.role !== "supper_admin") {
+        return res.status(401).json({
+          statusCode: 401,
+          message: "You are unauthorized for this route!",
+        });
+      }
+  
+      req.user = decoded;
+
+      next();
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      statusCode: 500,
+      message: "Internal server error",
+    });
+  }
+};

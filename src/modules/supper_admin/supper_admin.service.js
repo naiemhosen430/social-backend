@@ -1,21 +1,16 @@
-import UserModel from "./../auth/auth.model.js";
-
-export const getAllUserService = async (req) => {
-  const result = await UserModel.find();
-  return result;
-};
+import UserModel from "../auth/auth.model.js";
 
 export const createUserService = async (userinfo) => {
   const result = await UserModel.create(userinfo);
   return result;
 };
 
-export const loginUserService = async (req) => {
-  const result = await UserModel.findOne({ email: req.body.email });
+export const findOneByEmailFromUser = async (email) => {
+  const result = await UserModel.findOne({ email });
   return result;
 };
 
-export const findMeService = async (ruseridq) => {
+export const findOneByIdFromUser = async (ruseridq) => {
   const result = await UserModel.findOne({ _id: ruseridq });
   return result;
 };

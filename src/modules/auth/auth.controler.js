@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 import UserModel from "./auth.model.js";
 import {
   createUserService,
@@ -7,67 +8,92 @@ import {
   updateMeService,
 } from "./auth.service.js";
 import { genarateToken } from "../../utils/genarateToken.js";
+import { jwtTokenSercretKey } from "../../../secret.js";
 
 export const createUserController = async (req, res) => {
   try {
-    if (
-      !req.body.fullname ||
-      !req.body.email ||
-      !req.body.gender ||
-      !req.body.password ||
-      !req.body.birthday
-    ) {
+    // Check for required credentials
+    const { fullname, email, token, password } = req.body;
+    if (!fullname || !email || !token || !password) {
       return res.status(409).json({
         statusCode: 409,
-        message: "All cradencial required.",
+        message: "All credentials are required.",
       });
     }
 
-    const checkUser = await UserModel.findOne({ email: req.body.email });
-    if (checkUser) {
-      return res.status(409).json({
-        statusCode: 409,
-        message: "This email is already in use",
+    // Verify the token
+    jwt.verify(token, jwtTokenSercretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({
+          statusCode: 401,
+          message: "Invalid JWT token",
+        });
+      }
+
+      // Check if decoded token is valid
+      if (!decoded || decoded?.role !== "supper_admin") {
+        return res.status(401).json({
+          statusCode: 401,
+          message: "The token is invalid!",
+        });
+      }
+
+      const tokenTime = new Date(decoded.time).getTime();
+      const currentTime = Date.now();
+
+      if (currentTime > tokenTime) {
+        return res.status(401).json({
+          statusCode: 401,
+          message: "Invalid URL: Current time exceeds token time",
+        });
+      }
+
+      // Check if the user already exists
+      const checkUser = await UserModel.findOne({ email });
+      if (checkUser) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: "This email is already in use",
+        });
+      }
+
+      // Hash the password
+      const hashPassword = bcryptjs.hashSync(password, 10);
+      const userinfo = {
+        fullname,
+        email,
+        password: hashPassword,
+      };
+
+      // Create the user
+      const result = await createUserService(userinfo);
+      if (!result) {
+        return res.status(500).json({
+          statusCode: 500,
+          message: "Something went wrong",
+        });
+      }
+
+      // Generate a new token for the created user
+      const tokenObj = {
+        userId: result._id,
+        role: result.role,
+      };
+
+      const newToken = await genarateToken(tokenObj);
+      if (!newToken) {
+        return res.status(500).json({
+          statusCode: 500,
+          message: "Something went wrong",
+        });
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "Registered successfully",
+        data: result,
+        token: newToken,
       });
-    }
-
-    const hashPassword = bcryptjs.hashSync(req.body.password, 10);
-    const userinfo = {
-      fullname: req.body.fullname,
-      email: req.body.email,
-      email: req.body.birthday,
-      email: req.body.gender,
-      password: hashPassword,
-    };
-
-    const result = await createUserService(userinfo);
-
-    if (!result) {
-      return res.status(500).json({
-        statusCode: 500,
-        message: "Something went wrong",
-      });
-    }
-
-    const tokenObj = {
-      userId: result._id,
-      role: result.role,
-    };
-
-    const token = await genarateToken(tokenObj);
-
-    if (!token) {
-      return res.status(500).json({
-        statusCode: 500,
-        message: "Something went wrong",
-      });
-    }
-
-    return res.status(200).json({
-      statusCode: 200,
-      message: "User created successfully",
-      data: result,
-      token,
     });
   } catch (error) {
     console.log(error);

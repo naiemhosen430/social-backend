@@ -46,8 +46,13 @@ const userSchema = new Schema(
     role: {
       type: "String",
       required: true,
-      enum: ["user", "admin", "supper_admin"],
+      enum: ["user", "admin"],
       default: "user",
+    },
+    user_reg_token: {
+      type: "String",
+      required: false,
+      default: "",
     },
     hometwon: {
       type: "string",

@@ -61,6 +61,16 @@ const userSchema = new Schema(
       maxLength: 50,
       default: "not set",
     },
+    warning: {
+      type: "Number",
+      required: false,
+      default: 0,
+    },
+    conversion: {
+      type: "Number",
+      required: false,
+      default: 0,
+    },
     homecity: {
       type: "string",
       required: true,

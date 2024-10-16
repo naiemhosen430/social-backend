@@ -1,10 +1,13 @@
 import express from "express";
 import { supper_admin_authentication } from "../../utils/Authentication.js";
 import {
+  createFeatureController,
   createUserController,
   createUserTokenController,
+  getAllFeatureController,
   getAllUsersController,
   geteUsersController,
+  updateFeatureController,
   updateUsersController,
 } from "./supper_admin.controler.js";
 
@@ -29,5 +32,17 @@ supper_admin_router
 supper_admin_router
   .route("/updateuser/:id")
   .put(supper_admin_authentication, updateUsersController);
+
+supper_admin_router
+  .route("/feature/create")
+  .post(supper_admin_authentication, createFeatureController);
+
+supper_admin_router
+  .route("/feature/getall")
+  .get(supper_admin_authentication, getAllFeatureController);
+
+supper_admin_router
+  .route("/feature/:id")
+  .put(supper_admin_authentication, updateFeatureController);
 
 export default supper_admin_router;

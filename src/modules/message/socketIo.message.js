@@ -1,3 +1,4 @@
+import UserModel from "../auth/auth.model.js";
 import MessageModel from "./message.model.js";
 
 const messageSocket = (io, bot) => {
@@ -30,7 +31,6 @@ const messageSocket = (io, bot) => {
 
     client.on("disconnect", () => {
       console.log("A user disconnected");
-      delete users[client.id];
     });
   });
 
@@ -56,10 +56,19 @@ const messageSocket = (io, bot) => {
 
         io.emit(existing.agent_id, msg.chat);
       } else {
+        const count = await UserModel.countDocuments();
+        if (count === 0) {
+          console.log("No users found.");
+          return null;
+        }
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomUser = await UserModel.findOne().skip(randomIndex);
+
         const new_msg_obj = new MessageModel({
           customer_obj: msg.from,
           msg_id: msg.from.id,
           type: "telegram",
+          agent_id: randomUser?._id,
           chats: [
             {
               text: msg.text,
@@ -74,9 +83,9 @@ const messageSocket = (io, bot) => {
         const chatId = msg.chat.id;
         bot.sendMessage(
           chatId,
-          `Hi! ${msg.from.first_name} ${msg.from.last_name}. Thanks for your message. Our customer agent will join you soon.`
+          `Hi! ${msg.from.first_name} ${msg.from?.last_name}. I am ${randomUser?.fullname} Thanks for your message. How can i help you?`
         );
-        io.emit("newsupportmessage", new_msg_obj);
+        io.emit(`${randomUser?._id}-newmessage`, new_msg_obj);
       }
     }
   });

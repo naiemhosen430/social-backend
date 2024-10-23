@@ -17,7 +17,7 @@ const messageSocket = (io, bot) => {
             $push: {
               chats: {
                 text: text,
-                date: Date.now(), // Use Date.now() for the current timestamp
+                date: Date.now(),
                 type: "agent",
               },
             },
@@ -69,6 +69,8 @@ const messageSocket = (io, bot) => {
           msg_id: msg.from.id,
           type: "telegram",
           agent_id: randomUser?._id,
+          agent_name: randomUser?.fullname,
+          user_name: msg.from.first_name,
           chats: [
             {
               text: msg.text,

@@ -15,6 +15,6 @@ router.get("/", (req, res) => {
 router.use("/api/v1/auth", authRouter);
 router.use("/api/v1/supper_admin", supper_admin_router);
 router.post("/api/v1/verifyusertoken", verifyTokenController);
-router.post("/api/v1/message", messageRouter);
+router.use("/api/v1/message", messageRouter);
 
 export default router;

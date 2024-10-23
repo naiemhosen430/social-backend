@@ -14,7 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: frontEndUrl,
+    // origin: frontEndUrl,
     methods: ["GET", "POST"],
   },
 });
@@ -25,5 +25,3 @@ app.use(router);
 useIo(io);
 
 export default server;
-
-

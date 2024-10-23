@@ -6,7 +6,7 @@ const middleware = [
   express.json(),
   express.urlencoded({ extended: true }),
   cors({
-    origin: frontEndUrl,
+    // origin: frontEndUrl,
     credentials: true,
   }),
 ];

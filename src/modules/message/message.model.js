@@ -7,6 +7,17 @@ const messageSchema = new Schema(
       required: "true",
       default: "",
     },
+
+    agent_name: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    user_name: {
+      type: String,
+      required: false,
+      default: null,
+    },
     agent_id: {
       type: String,
       required: false,
